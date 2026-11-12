@@ -1,0 +1,42 @@
+name: Scheduled K-Means Trading Bot
+
+on:
+  schedule:
+    # Runs weekdays at 14:35 UTC
+    - cron: "35 14 * * 1-5"
+
+  # Allows you to start it manually from GitHub
+  workflow_dispatch:
+
+jobs:
+  trading-bot:
+    runs-on: ubuntu-latest
+
+    # Maximum time the job can run
+    timeout-minutes: 20
+
+    env:
+      APCA_API_KEY_ID: PKUHRU7FTGWK6EZHDEVWDZQHKA
+      APCA_API_SECRET_KEY: FHr2uwRc7kGN95oaLeAKuNiBnrsQtbV7ffqSKGS8rc6J
+      BASE_URL: https://paper-api.alpaca.markets/v2
+
+      RUN_DURATION_MINUTES: "15"
+      TRADING_MODE: "paper"
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run trading bot
+        run: |
+          python main.py
